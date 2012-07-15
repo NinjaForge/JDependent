@@ -1,15 +1,12 @@
 <?php
 /**
- * @category	JDependent
- * @package		Plugins
+ * @package		JDependent
  * @subpackage	Nooku
- * @copyright	Copyright (C) 2011 NinjaForge. All rights reserved.
+ * @copyright	Copyright (C) 2012 NinjaForge. All rights reserved.
  * @license 	GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://ninjaforge.com
  */
 defined('_JEXEC') or die;
-
-require_once dirname(__FILE__).'/plugin.php';
 
 /**
  * Dependency Plugin Class for the nooku framework

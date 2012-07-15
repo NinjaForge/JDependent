@@ -1,13 +1,11 @@
 <?php
 /**
  * @package		JDependent
- * @copyright	Copyright (C) 2011 NinjaForge. All rights reserved.
+ * @copyright	Copyright (C) 2012 NinjaForge. All rights reserved.
  * @license 	GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://ninjaforge.com
  */
 defined('_JEXEC') or die;
-
-require_once dirname(__FILE__).'/dependents/plugin.php';
 
 /**
  * Dependency Class for Joomla 3rd Party Extensions
@@ -73,7 +71,7 @@ class JDependent
 	 *
 	 * @return JDependent
 	 */
-	public function install($identifier, $excludes = array())
+	public function uninstall($identifier, $excludes = array())
 	{
 		$requisite = $this->_instantiate($identifier);
 
@@ -153,7 +151,7 @@ class JDependent
 		$query 	= "DELETE FROM `#__joomla_dependents` WHERE `dependent` = '".$dependent."' AND  `requisite` = '".$requisite."';";
 		$db->setQuery($query);
 
-		if (!$db->execute())
+		if (!$db->execute()) {
 			JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 		}
 
@@ -192,6 +190,8 @@ class JDependent
      */
 	protected function _instantiate($identifier = null)
 	{
+		include_once dirname(__FILE__).'/dependents/plugin.php';
+		
 		$path = dirname(__FILE__).'/dependents/'.$identifier.'.php';
 		if (file_exists($path))
 			include_once $path;

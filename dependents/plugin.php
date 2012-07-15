@@ -1,9 +1,8 @@
 <?php
 /**
- * @category	JDependent
- * @package		Plugins
+ * @package		JDependent
  * @subpackage	Plugin
- * @copyright	Copyright (C) 2011 NinjaForge. All rights reserved.
+ * @copyright	Copyright (C) 2012 NinjaForge. All rights reserved.
  * @license 	GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
  * @link     	http://ninjaforge.com
  */
@@ -230,7 +229,7 @@ class JDependentPlugin extends JDependent
 				}
 			}
 		}
-		
+	}
 
 	/**
      * Method for uninstalling dependencies
