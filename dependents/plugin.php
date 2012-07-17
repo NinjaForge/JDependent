@@ -34,11 +34,11 @@ class JDependentPlugin extends JDependent
 	/**
 	 * Method for running any dependent specific code before we do any installations
 	 *
-	 * @return JDependentPlguin
+	 * @return boolean true if installation should continue
 	 */
 	public function beforeInstall()
 	{
-		return $this;
+		return true;
 	}
 
 	/**
@@ -54,11 +54,11 @@ class JDependentPlugin extends JDependent
 	/**
 	 * Method for running any dependent specific code before we uninstall
 	 *
-	 * @return JDependentPlguin
+	 * @return boolean true if uninstallation should continue
 	 */
 	public function beforeUninstall()
 	{
-		return $this;
+		return true;
 	}
 
 	/**
@@ -110,19 +110,22 @@ class JDependentPlugin extends JDependent
      */
 	public function install($exclude = array())
 	{
-		$this->beforeInstall();
-		$this->extract();
+		if ($this->beforeInstall()) {
+			$this->extract();
 
-		foreach ($exclude as $key => $type) {
-			unset($this->_dependents[$key]);
+			$this->_dependents = $this->getDependents();
+
+			foreach ($exclude as $key => $type) {
+				unset($this->_dependents[$key]);
+			}
+
+			$this->installExtensions()
+				->moveFolders()
+				->moveFiles()
+				->registerDependency($this->getExtensionName(), $this->getName());
+
+			$this->afterInstall();
 		}
-
-		$this->installExtensions()
-			->moveFolders()
-			->moveFiles()
-			->registerDependency($this->getExtensionName(), $this->getName());
-
-		$this->afterInstall();
 
 		return $this;
 	}
@@ -229,6 +232,8 @@ class JDependentPlugin extends JDependent
 				}
 			}
 		}
+
+		return $this;
 	}
 
 	/**
@@ -239,20 +244,23 @@ class JDependentPlugin extends JDependent
      */
 	public function uninstall($exclude = array())
 	{
-		// we only remove things if nothing else relies on it
-		if (!$this->checkDependencyRegistry($this->getExtensionName(), $this->getName())) {
-			$this->beforeUninstall();
+		if ($this->beforeUninstall()) {
+			// we only remove things if nothing else relies on it
+			if (!$this->checkDependencyRegistry($this->getExtensionName(), $this->getName())) {
 
-			foreach ($exclude as $key => $type) {
-				unset($this->_dependents[$key]);
+				$this->_dependents = $this->getDependents();
+
+				foreach ($exclude as $key => $type) {
+					unset($this->_dependents[$key]);
+				}
+
+				$this->uninstallExtensions()
+					->removeFolders()
+					->removeFiles()
+					->deregisterDependency($this->getExtensionName(), $this->getName());
+
+				$this->afterUninstall();
 			}
-
-			$this->uninstallExtensions()
-				->removeFolders()
-				->removeFiles()
-				->deregisterDependency($this->getExtensionName(), $this->getName());
-
-			$this->afterUninstall();
 		}
 
 		return $this;
@@ -267,8 +275,14 @@ class JDependentPlugin extends JDependent
 	{
 		if (isset($this->_dependents['extensions'])) {
 			foreach ($this->_dependents['extensions'] as $extension) {
-				$installer = new JInstaller;
-				$installer->uninstall($this->install->getManifest()->getAttribute('type'), $this->getExtensionName());
+				$db		= JFactory::getDBO();
+				$query = "SELECT extension_id FROM `#__extensions` WHERE `type` = '".$extension['type']."' AND `element` = '".$extension['name']."';";
+				$db->setQuery($query);
+				// only uninstall this extension if it exists
+				if ($id = $db->loadResult()) {
+					$installer = new JInstaller;
+					$installer->uninstall($extension['type'], $id);
+				}
 			}
 		}
 

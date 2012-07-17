@@ -42,6 +42,11 @@ class JDependent
 		if (!isset($config['dependents_path']))
 			$this->config['dependents_path'] = $this->installer->getPath('source').'/dependents/';
 
+
+		$lang =& JFactory::getLanguage();
+		$lang->load('lib_jdependent', dirname(__FILE__), 'en-GB');
+		$lang->load('lib_jdependent', dirname(__FILE__), $lang->getDefault(), true);
+
 		$this->createTable();
 	}
 
@@ -168,11 +173,10 @@ class JDependent
 	public function checkDependencyRegistry($dependent, $requisite)
 	{
 		$db 	= JFactory::getDBO();
-		$query 	= "SELECT COUNT(*) FROM `#__joomla_dependents` WHERE `dependent` = '".$dependent."' AND `requisite` != '".$requisite."';";
+		$query 	= "SELECT COUNT(*) FROM `#__joomla_dependents` WHERE `dependent` != '".$dependent."' AND `requisite` = '".$requisite."';";
 		$db->setQuery($query);
 
 		$result = $db->loadResult();
-
 		// simply if there are entries in the db then there must be other extensions using this dependent
 		if ($result) return true;
 

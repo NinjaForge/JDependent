@@ -19,65 +19,56 @@ class JDependentPluginNinja extends JDependentPlugin
 	protected $_name = 'ninja';
 
 	/**
+	 * Method for setting up dependent files/folders and extensions
+	 */
+	public function getDependents()
+	{
+		$dependents = array(
+			'extensions' 	=> array(
+								array('type' => 'plugin', 'name' => 'ninja', 'from' => '/plugins/system')
+							),
+			'folders'		=> array(
+								array('from' => '/administrator/components/com_ninja'),
+								array('from' => '/media/com_ninja')
+							),
+			'files'			=> array(
+								array('from' => '/administrator/language/en-GB/en-GB.com_ninja.ini')
+							)
+		);
+
+		return $dependents;
+	}
+
+	/**
 	 * Enviroment Checks for the Ninja Framework
 	 */
 	public function beforeInstall()
 	{
 		$user		= JFactory::getUser();
 		$db			= JFactory::getDBO();
-		$condition	= $user->authorize( 'com_config', 'manage' );
-		$default 	= JText::_('LIB_JDEPENDENT_WHOOPS_SOMETHING_WENT_TERRIBLY_WRONG');
 		$extension	= $this->getExtensionName();
 
-		if(!version_compare('2', '5.0.41', '>=')) {
-			JError::raiseWarning(500, $default);
+		if(!version_compare($db->getVersion(), '5.0.41', '>=')) {
 			$message	= JText::_('LIB_JDEPENDENT_MYSQL_SERVER_INCOMPATIBILITY');
 			$message	= sprintf($message, $extension, $db->getVersion());
-			JError::raiseWarning(500, $condition ? $message : $default);
+			JError::raiseWarning(500, $message);
+			return false;
 		}
 		if(!version_compare(phpversion(), '5.2', '>=')) {
 			$message	= JText::_('LIB_JDEPENDENT_PHP_INCOMPATIBILITY');
 			$message	= sprintf($message, $extension, phpversion());
 			$condition	= $user->authorize( 'com_config', 'manage' );
-			JError::raiseWarning(500, $condition ? $message : $default);
+			JError::raiseWarning(500, $message);
+			return false;
 		}
 		if(!class_exists('mysqli')) {
 			$message	= JText::_('LIB_JDEPENDENT_MYSQLI_MISSING');
 			$message	= sprintf($message, $extension);
-			JError::raiseWarning(500, $condition ? $message : $default);
+			JError::raiseWarning(500, $message);
+			return false;
 		}
 
-		// remove this as its possible it will still work?
-		/*if(version_compare('5.3', phpversion(), '<=') && extension_loaded('ionCube Loader')) {
-
-			if(ioncube_loader_iversion() < 40002) {
-				$message	= JText::_('Your server is affected by a bug in ionCube Loader for PHP 5.3 that causes our template layout parsing to fail. Please update to a version later than ionCube Loader 4.0 (your server is %s) before using %s.');
-				$message	= sprintf($message, ioncube_loader_version(), $extension);
-				$condition	= $user->authorize( 'com_config', 'manage' );
-				//Don't return this one, in case the site still works with ionCube loader present
-				$notify($condition, $message);
-			}
-		}*/
-	}
-
-	/**
-	 * Method for installing the dependent
-	 *
-	 * @param 	array 	an array of dependents to exclude eg: array('extensions', 'folders', 'files')
-	 * @return	JDependentPlugin
-	 */
-	public function install($exclude = array())
-	{
-		$items = array(
-			'extensions' 	=> array(
-								array('name' => 'plg_ninja', 'from' => '/plugins/system'),
-								array('name' => 'com_ninja', 'from' => '/')
-							)
-		);
-
-		$this->_dependents = $items;
-
-		return parent::install($exclude);
+		return true;
 	}
 
 	/**
@@ -87,15 +78,25 @@ class JDependentPluginNinja extends JDependentPlugin
 	{
 		$db = JFactory::getDBO();
 
+		// Check if Koowa is active
+		if(JFactory::getApplication()->getCfg('dbtype') != 'mysqli')
+		{
+			$conf = JFactory::getConfig();
+			$path = JPATH_CONFIGURATION.DS.'configuration.php';
+			if(JFile::exists($path)) {
+				JPath::setPermissions($path, '0644');
+				$search  = JFile::read($path);
+				$replace = str_replace('var $dbtype = \'mysql\';', 'var $dbtype = \'mysqli\';', $search);
+				JFile::write($path, $replace);
+				JPath::setPermissions($path, '0444');
+			}
+		}
+
 		// Disable the com_ninja admin menu, and make sure plg_ninja is enabled and set to ordering of 1 (koowa is ordering 0 by default)
 		if (version_compare(JVERSION,'1.6.0','ge')) {
-			$db->setQuery("UPDATE `#__extensions` SET `enabled` = '0' WHERE type = 'component' AND element = 'com_ninja';");
-			$db->query();
 			$db->setQuery("UPDATE `#__extensions` SET `enabled` = '1', `ordering` = '1' WHERE type = 'plugin' AND element = 'ninja';");
 			$db->query();
 		} else {
-			$db->setQuery("UPDATE `#__components` SET `enabled` = '0' WHERE option = 'com_ninja';");
-			$db->query();
 			$db->setQuery("UPDATE `#__plugins` SET `enabled` = '1', `ordering` = '1' WHERE folder = 'system' AND element = 'ninja';");
 			$db->query();
 		}
