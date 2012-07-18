@@ -100,7 +100,7 @@ class JDependentPluginNooku extends JDependentPlugin
 			$db->setQuery("UPDATE `#__extensions` SET `enabled` = '1', `ordering` = '0' WHERE type = 'plugin' AND element = 'koowa';");
 			$db->query();
 		} else {
-			$db->setQuery("UPDATE `#__plugins` SET `enabled` = '1', `ordering` = '0' WHERE folder = 'system' AND element = 'koowa';");
+			$db->setQuery("UPDATE `#__plugins` SET `published` = '1', `ordering` = '0' WHERE folder = 'system' AND element = 'koowa';");
 			$db->query();
 		}
 	}

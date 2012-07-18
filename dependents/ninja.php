@@ -97,7 +97,7 @@ class JDependentPluginNinja extends JDependentPlugin
 			$db->setQuery("UPDATE `#__extensions` SET `enabled` = '1', `ordering` = '1' WHERE type = 'plugin' AND element = 'ninja';");
 			$db->query();
 		} else {
-			$db->setQuery("UPDATE `#__plugins` SET `enabled` = '1', `ordering` = '1' WHERE folder = 'system' AND element = 'ninja';");
+			$db->setQuery("UPDATE `#__plugins` SET `published` = '1', `ordering` = '1' WHERE folder = 'system' AND element = 'ninja';");
 			$db->query();
 		}
 	}
