@@ -107,7 +107,7 @@ class JDependent
 
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$db->query())
 				JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 			else
 				$this->_table = true;
@@ -135,7 +135,7 @@ class JDependent
 			$query = "INSERT INTO `#__joomla_dependents` (`id` ,`dependent` ,`requisite`) VALUES (NULL,  '".$dependent."',  '".$requisite."');";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$db->query())
 				JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 		}
 
@@ -156,7 +156,7 @@ class JDependent
 		$query 	= "DELETE FROM `#__joomla_dependents` WHERE `dependent` = '".$dependent."' AND  `requisite` = '".$requisite."';";
 		$db->setQuery($query);
 
-		if (!$db->execute()) {
+		if (!$db->query()) {
 			JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 		}
 

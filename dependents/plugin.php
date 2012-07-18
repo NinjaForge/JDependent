@@ -80,18 +80,26 @@ class JDependentPlugin extends JDependent
 	public function getExtensionName()
 	{
 		$manifest 	= $this->installer->getManifest();
-		$type		= $manifest->getAttribute('type');
 
+		if (version_compare(JVERSION,'1.6.0','ge')) {
+			$name 		= $manifest->name;
+			$type		= $manifest->getAttribute('type');
+		} else {
+			$manifest 	= $manifest->document;
+			$name		= $manifest->get('name');
+			$name		= $name[0]->data();
+			$type		= $manifest->attributes('type');
+		}
 		// Its either a component a plugin or a module
 		if ($type == 'component') {
-			$name = 'com_';
+			$prefix = 'com_';
 		} elseif ($type == 'plugin') {
-			$name = 'plg_';
+			$prefix = 'plg_';
 		} else {
-			$name = 'mod_';
+			$prefix = 'mod_';
 		}
 
-		return $name.strtolower($manifest->name);
+		return $prefix.strtolower($name);
 	}
 
 	/**
