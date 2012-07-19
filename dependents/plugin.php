@@ -284,7 +284,11 @@ class JDependentPlugin extends JDependent
 		if (isset($this->_dependents['extensions'])) {
 			foreach ($this->_dependents['extensions'] as $extension) {
 				$db		= JFactory::getDBO();
-				$query = "SELECT extension_id FROM `#__extensions` WHERE `type` = '".$extension['type']."' AND `element` = '".$extension['name']."';";
+				if (version_compare(JVERSION,'1.6.0','ge')) {
+					$query = "SELECT extension_id FROM `#__extensions` WHERE `type` = '".$extension['type']."' AND `element` = '".$extension['name']."';";
+				} else {
+					$query = "SELECT id FROM `#__".$extension['type']."s` WHERE `element` = '".$extension['name']."';";
+				}
 				$db->setQuery($query);
 				// only uninstall this extension if it exists
 				if ($id = $db->loadResult()) {
