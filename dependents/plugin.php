@@ -269,7 +269,7 @@ class JDependentPlugin extends JDependent
 				$this->afterUninstall();
 			}
 			// deregister the dependency
-			$this->deregisterDependency($this->getExtensionName(), $this->getName())
+			$this->deregisterDependency($this->getExtensionName(), $this->getName());
 		}
 
 		return $this;
