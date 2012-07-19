@@ -264,11 +264,12 @@ class JDependentPlugin extends JDependent
 
 				$this->uninstallExtensions()
 					->removeFolders()
-					->removeFiles()
-					->deregisterDependency($this->getExtensionName(), $this->getName());
+					->removeFiles();
 
 				$this->afterUninstall();
 			}
+			// deregister the dependency
+			$this->deregisterDependency($this->getExtensionName(), $this->getName())
 		}
 
 		return $this;
