@@ -111,6 +111,14 @@ class JDependentPlugin extends JDependent
 	}
 
 	/**
+	 * Method for returning the plugin version
+	 */
+	public function getVersion()
+	{
+		return $this->_version;
+	}
+
+	/**
      * Method for installing dependencies
      *
      * @param  array an array of items to exclude from installation
@@ -130,7 +138,7 @@ class JDependentPlugin extends JDependent
 			$this->installExtensions()
 				->moveFolders()
 				->moveFiles()
-				->registerDependency($this->getExtensionName(), $this->getName());
+				->registerDependency($this->getExtensionName(), $this->getName(), $this->getVersion());
 
 			$this->afterInstall();
 		}

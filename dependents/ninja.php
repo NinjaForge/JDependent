@@ -19,6 +19,11 @@ class JDependentPluginNinja extends JDependentPlugin
 	protected $_name = 'ninja';
 
 	/**
+	 * The version number
+	 */
+	protected $_version = '2.0';
+
+	/**
 	 * Method for setting up dependent files/folders and extensions
 	 */
 	public function getDependents()

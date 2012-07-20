@@ -18,6 +18,11 @@ class JDependentPluginNooku extends JDependentPlugin
 	 */
 	protected $_name = 'nooku';
 
+	/**
+	 * The version number
+	 */
+	protected $_version = '12.1';
+
 
 	/**
 	 * Method for setting up dependent files/folders and extensions

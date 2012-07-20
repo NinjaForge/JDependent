@@ -102,6 +102,7 @@ class JDependent
 					'id bigint(20) unsigned NOT NULL auto_increment,'.
 					'dependent VARCHAR( 255 ) NOT NULL,'.
 					'requisite VARCHAR( 255 ) NOT NULL,'.
+					'version DECIMAL(10,2) unsigned NOT NULL,'.
 					'PRIMARY KEY  (`id`)'.
 				') ENGINE=MyISAM DEFAULT CHARSET=utf8;';
 
@@ -122,7 +123,7 @@ class JDependent
 	 *
 	 * @return JDependent
 	 */
-	public function registerDependency($dependent, $requisite)
+	public function registerDependency($dependent, $requisite, $version)
 	{
 		$db = JFactory::getDBO();
 
@@ -132,7 +133,7 @@ class JDependent
 
 		//only register this item if it has not been already
 		if (!$db->loadResult()) {
-			$query = "INSERT INTO `#__joomla_dependents` (`id` ,`dependent` ,`requisite`) VALUES (NULL,  '".$dependent."',  '".$requisite."');";
+			$query = "INSERT INTO `#__joomla_dependents` (`id` ,`dependent` ,`requisite` ,`version`) VALUES (NULL,  '".$dependent."',  '".$requisite."',  '".$version."');";
 			$db->setQuery($query);
 
 			if (!$db->query())
