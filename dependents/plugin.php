@@ -124,7 +124,7 @@ class JDependentPlugin extends JDependent
      * @param  array an array of items to exclude from installation
      * @return JDependentPlugin
      */
-	public function install($exclude = array())
+	public function install($identifier, $exclude = array())
 	{
 		if ($this->beforeInstall()) {
 			$this->extract();
@@ -258,7 +258,7 @@ class JDependentPlugin extends JDependent
      * @param  array an array of items to exclude from installation
      * @return JDependentPlugin
      */
-	public function uninstall($exclude = array())
+	public function uninstall($identifier, $exclude = array())
 	{
 		if ($this->beforeUninstall()) {
 			// we only remove things if nothing else relies on it

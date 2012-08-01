@@ -43,7 +43,7 @@ class JDependent
 			$this->config['dependents_path'] = $this->installer->getPath('source').'/dependents/';
 
 
-		$lang =& JFactory::getLanguage();
+		$lang = JFactory::getLanguage();
 		$lang->load('lib_jdependent', dirname(__FILE__), 'en-GB');
 		$lang->load('lib_jdependent', dirname(__FILE__), $lang->getDefault(), true);
 
@@ -63,7 +63,7 @@ class JDependent
 	{
 		$requisite = $this->_instantiate($identifier);
 
-		$requisite->install($excludes);
+		$requisite->install($identifier, $excludes);
 
 		return $this;
 	}

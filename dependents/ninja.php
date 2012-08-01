@@ -9,7 +9,7 @@
 defined('_JEXEC') or die;
 
 /**
- * Dependency Plugin Class for the nooku framework
+ * Dependency Plugin Class for com_ninja
  */
 class JDependentPluginNinja extends JDependentPlugin
 {
